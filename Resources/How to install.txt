@@ -1,0 +1,32 @@
+QUICKNOTE — capture thoughts into Apple Notes from anywhere
+===========================================================
+
+INSTALL
+1. Drag "QuickNote" onto the "Applications" folder in this window.
+2. Open Applications and double-click QuickNote.
+
+THE FIRST TIME YOU OPEN IT
+Your Mac will say it "can't verify" the app, because it isn't from the App Store.
+That's normal for apps shared between friends. To allow it:
+  1. Click "Done" (or "OK") on that message.
+  2. Open System Settings > Privacy & Security.
+  3. Scroll down and click "Open Anyway" next to QuickNote.
+  4. Enter your Mac password if asked, then click "Open Anyway" again.
+You only have to do this once.
+
+PERMISSIONS
+macOS asks for these the first time you use each feature:
+- Input Monitoring: lets you hold Option or Control to open QuickNote. Turn
+  QuickNote on in the page that opens, then quit and reopen QuickNote.
+- Notes: on your first save. Click OK.
+- Microphone and Speech Recognition: the first time you talk.
+
+USING IT
+- Look for the pencil icon at the top right of your screen (in the menu bar).
+- Hold Option to type a note. Hold Control and talk; let go when you're done.
+- Press Return to save it as a bullet in your note, or Esc to cancel.
+- Control + Option + Space (type) and Control + Option + D (talk) also work.
+- Click the pencil icon to choose which note your captures go to.
+
+UNINSTALL
+Click the pencil icon > Quit QuickNote, then drag QuickNote from Applications to the Trash.
