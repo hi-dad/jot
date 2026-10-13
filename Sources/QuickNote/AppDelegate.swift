@@ -11,6 +11,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
     private let notesMenu = NSMenu()
     private var panel: CapturePanel?
     private var hotKeys: [HotKey] = []
+    private let modifierHold = ModifierHold()
 
     // MARK: Saved note choice
 
@@ -48,6 +49,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
             },
         ]
 
+        // Hold ⌥ to open the box; hold ⌃ to talk while it's held.
+        modifierHold.onHoldStart = { [weak self] key in
+            self?.showCapture(listening: key == .control)
+        }
+        modifierHold.onHoldEnd = { [weak self] key in
+            if key == .control { self?.panel?.model.stopDictation() }
+        }
+        modifierHold.start(askForPermission: true)
+
         let failed = hotKeys.filter { $0.status != noErr }
         if !failed.isEmpty {
             let list = failed.map { "\($0.name) (error \($0.status))" }.joined(separator: ", ")
@@ -63,7 +73,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
         if let panel {
             bringToFront()
             panel.makeKeyAndOrderFront(nil)
-            if listening { panel.model.toggleDictation() }
+            if listening { panel.model.startDictation() }
             return
         }
 
@@ -77,7 +87,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
         self.panel = panel
         bringToFront()
         panel.present()
-        if listening { model.toggleDictation() }
+        if listening { model.startDictation() }
     }
 
     private func closePanel() {
@@ -131,6 +141,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
 
     func menuNeedsUpdate(_ menu: NSMenu) {
         if menu === statusMenu {
+            // Picks up Input Monitoring if it was allowed after launch.
+            modifierHold.start(askForPermission: false)
             rebuildStatusMenu()
         } else if menu === notesMenu {
             rebuildNotesMenu()
@@ -149,6 +161,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
         dictate.keyEquivalentModifierMask = [.control, .option]
         dictate.target = self
         statusMenu.addItem(dictate)
+
+        if !modifierHold.isRunning {
+            let enable = NSMenuItem(title: "Turn On Hold ⌥ / Hold ⌃…", action: #selector(menuEnableHold), keyEquivalent: "")
+            enable.target = self
+            statusMenu.addItem(enable)
+        }
 
         statusMenu.addItem(.separator())
 
@@ -224,6 +242,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
     @objc private func menuCapture() { showCapture(listening: false) }
 
     @objc private func menuDictate() { showCapture(listening: true) }
+
+    @objc private func menuEnableHold() {
+        if modifierHold.start(askForPermission: true) { return }
+        showAlert(
+            "Allow Input Monitoring",
+            "To open QuickNote by holding ⌥ (type) or ⌃ (talk), turn on QuickNote in System Settings → Privacy & Security → Input Monitoring, then quit and reopen QuickNote."
+        )
+        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ListenEvent") {
+            NSWorkspace.shared.open(url)
+        }
+    }
 
     @objc private func menuPickNote(_ sender: NSMenuItem) {
         guard let note = sender.representedObject as? NoteRef else { return }
