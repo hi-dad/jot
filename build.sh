@@ -1,14 +1,19 @@
 #!/bin/bash
 # Builds QuickNote.app into ./build. Requires Xcode or the Xcode Command Line Tools.
+# Calls swiftc directly (no Swift Package Manager) so a broken SwiftPM install can't block the build.
 set -euo pipefail
 cd "$(dirname "$0")"
-
-swift build -c release
 
 APP=build/QuickNote.app
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
-cp .build/release/QuickNote "$APP/Contents/MacOS/QuickNote"
+
+swiftc -O -parse-as-library \
+    -target "$(uname -m)-apple-macos13.0" \
+    -sdk "$(xcrun --show-sdk-path)" \
+    Sources/QuickNote/*.swift \
+    -o "$APP/Contents/MacOS/QuickNote"
+
 cp Resources/Info.plist "$APP/Contents/Info.plist"
 
 # Ad-hoc signature so macOS will show the microphone / Notes permission prompts.
