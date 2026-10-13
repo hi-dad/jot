@@ -1,0 +1,34 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show toolchain
+        run: |
+          xcodebuild -version
+          swiftc --version
+
+      - name: Build QuickNote.app
+        run: ./build.sh
+
+      - name: Verify bundle
+        run: |
+          test -x build/QuickNote.app/Contents/MacOS/QuickNote
+          plutil -lint build/QuickNote.app/Contents/Info.plist
+          codesign --verify --verbose build/QuickNote.app
+
+      - name: Zip app
+        run: ditto -c -k --keepParent build/QuickNote.app build/QuickNote.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: QuickNote
+          path: build/QuickNote.zip
