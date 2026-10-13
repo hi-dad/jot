@@ -26,11 +26,18 @@ final class CaptureModel: ObservableObject {
     }
 
     func toggleDictation() {
-        if !dictation.isListening {
-            textBeforeDictation = text.trimmingCharacters(in: .whitespacesAndNewlines)
-            errorMessage = nil
-        }
-        dictation.toggle()
+        dictation.isListening ? stopDictation() : startDictation()
+    }
+
+    func startDictation() {
+        guard !dictation.isListening else { return }
+        textBeforeDictation = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        errorMessage = nil
+        dictation.start()
+    }
+
+    func stopDictation() {
+        dictation.stop()
     }
 
     func save() {

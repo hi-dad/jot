@@ -53,14 +53,21 @@ enum NotesBridge {
         }
     }
 
-    /// Adds `text` as a new line at the bottom of the note.
+    /// Adds `text` as a bullet at the bottom of the note, continuing the note's last list if it ends with one.
     static func append(_ text: String, to noteID: String) throws {
-        let html = "<div>" + text.components(separatedBy: .newlines).map(escapeHTML).joined(separator: "<br>") + "</div>"
+        let item = "<li>" + text.components(separatedBy: .newlines).map(escapeHTML).joined(separator: "<br>") + "</li>"
+        let id = escapeAppleScript(noteID)
+        var body = try run("""
+        tell application "Notes" to return body of note id "\(id)"
+        """)
+        while body.last?.isWhitespace == true { body.removeLast() }
+        if let listEnd = body.range(of: "</ul>", options: [.backwards, .anchored]) {
+            body.replaceSubrange(listEnd, with: item + "</ul>")
+        } else {
+            body += "<ul>" + item + "</ul>"
+        }
         _ = try run("""
-        tell application "Notes"
-            set n to note id "\(escapeAppleScript(noteID))"
-            set body of n to (body of n) & "\(escapeAppleScript(html))"
-        end tell
+        tell application "Notes" to set body of note id "\(id)" to "\(escapeAppleScript(body))"
         """)
     }
 
