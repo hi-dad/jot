@@ -39,21 +39,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
 
         hotKeys = [
             // ⌃⌥Space: open the box for typing
-            HotKey(keyCode: kVK_Space, modifiers: controlKey | optionKey) { [weak self] in
+            HotKey(name: "⌃⌥Space", keyCode: kVK_Space, modifiers: controlKey | optionKey) { [weak self] in
                 self?.showCapture(listening: false)
             },
             // ⌃⌥D: open the box and start listening right away
-            HotKey(keyCode: kVK_ANSI_D, modifiers: controlKey | optionKey) { [weak self] in
+            HotKey(name: "⌃⌥D", keyCode: kVK_ANSI_D, modifiers: controlKey | optionKey) { [weak self] in
                 self?.showCapture(listening: true)
             },
         ]
+
+        let failed = hotKeys.filter { $0.status != noErr }
+        if !failed.isEmpty {
+            let list = failed.map { "\($0.name) (error \($0.status))" }.joined(separator: ", ")
+            DispatchQueue.main.async { [weak self] in
+                self?.showAlert("Some hotkeys didn't register", "\(list). Another app may already be using them. You can still use the menu bar icon.")
+            }
+        }
     }
 
     // MARK: Capture box
 
     private func showCapture(listening: Bool) {
         if let panel {
-            NSApp.activate(ignoringOtherApps: true)
+            bringToFront()
             panel.makeKeyAndOrderFront(nil)
             if listening { panel.model.toggleDictation() }
             return
@@ -67,7 +75,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
         let panel = CapturePanel(model: model)
         panel.delegate = self
         self.panel = panel
-        NSApp.activate(ignoringOtherApps: true)
+        bringToFront()
         panel.present()
         if listening { model.toggleDictation() }
     }
@@ -223,7 +231,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
     }
 
     @objc private func menuCreateNote() {
-        NSApp.activate(ignoringOtherApps: true)
+        bringToFront()
         let alert = NSAlert()
         alert.messageText = "New note name"
         alert.informativeText = "QuickNote will create this note in your default Notes folder and save captures to it."
@@ -267,6 +275,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
 
     // MARK: Helpers
 
+    /// Shows the app's windows and makes it active. It must un-hide first: closing the
+    /// box hides the app, and a hidden app's windows stay invisible even when ordered front.
+    private func bringToFront() {
+        NSApp.unhideWithoutActivation()
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
     private func setStatusIcon(_ symbol: String) {
         let image = NSImage(systemSymbolName: symbol, accessibilityDescription: "QuickNote")
         image?.isTemplate = true
@@ -282,7 +297,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
     }
 
     private func showAlert(_ title: String, _ message: String) {
-        NSApp.activate(ignoringOtherApps: true)
+        bringToFront()
         let alert = NSAlert()
         alert.messageText = title
         alert.informativeText = message
