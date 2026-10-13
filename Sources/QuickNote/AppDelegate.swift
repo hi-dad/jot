@@ -2,6 +2,7 @@ import AppKit
 import Carbon.HIToolbox
 import ServiceManagement
 
+@MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWindowDelegate {
     private static let defaultNoteName = "Quick Capture"
 
