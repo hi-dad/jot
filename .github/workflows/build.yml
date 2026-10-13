@@ -4,6 +4,11 @@ on:
   push:
   pull_request:
   workflow_dispatch:
+    inputs:
+      release:
+        description: Publish a release (tagged v<version from Info.plist>)
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -45,7 +50,10 @@ jobs:
           path: dist/QuickNote.dmg
 
       - name: Publish release
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: startsWith(github.ref, 'refs/tags/v') || inputs.release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" dist/QuickNote.dmg --title "QuickNote $GITHUB_REF_NAME" --generate-notes
+        run: |
+          tag="$GITHUB_REF_NAME"
+          [[ "$GITHUB_REF" == refs/tags/v* ]] || tag="v$(plutil -extract CFBundleShortVersionString raw Resources/Info.plist)"
+          gh release create "$tag" dist/QuickNote.dmg --target "$GITHUB_SHA" --title "QuickNote $tag" --generate-notes
