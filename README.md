@@ -33,7 +33,7 @@ Requires macOS 13+ and Xcode or the Command Line Tools (`xcode-select --install`
 ./build.sh dist   # builds dist/QuickNote.dmg to share instead
 ```
 
-To publish a new download, bump the version in `Resources/Info.plist`, then on GitHub go to **Actions → Build → Run workflow**, tick **Publish a release**, and run it on `main` (pushing a tag such as `v0.2.0` works too). GitHub Actions builds the DMG and attaches it to a release.
+Every merge to `main` publishes a new download automatically: GitHub Actions builds the DMG and posts it as the latest release, which is what the download link above serves. Pushes to other branches are built and tested but not published.
 
 ## Permissions (first run)
 
