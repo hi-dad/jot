@@ -25,6 +25,16 @@ jobs:
           plutil -lint build/QuickNote.app/Contents/Info.plist
           codesign --verify --verbose build/QuickNote.app
 
+      - name: Smoke test (hotkey opens the capture box)
+        run: |
+          open build/QuickNote.app
+          sleep 3
+          swift ci/smoke-test.swift
+
+      - name: App log
+        if: always()
+        run: log show --last 5m --info --predicate 'process == "QuickNote"' | tail -50
+
       - name: Zip app
         run: ditto -c -k --keepParent build/QuickNote.app build/QuickNote.zip
 
