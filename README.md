@@ -1,7 +1,7 @@
 # QuickNote
 
 A tiny Mac menu-bar app for capturing thoughts and to-dos without opening Notes.
-Press a hotkey, type or talk, hit Return, and the text is added to the bottom of an Apple Notes page you choose.
+Press a hotkey, type or talk, hit Return, and the text is added as a bullet at the bottom of an Apple Notes page you choose.
 
 | Hotkey | What it does |
 |---|---|
