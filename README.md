@@ -16,15 +16,24 @@ Press a hotkey, type or talk, hit Return, and the text is added as a bullet at t
 The menu bar icon (✎) lets you **choose which note** captures go to, create a new note, open the note in Notes, and turn on **Launch at Login**.
 If you haven't picked a note yet, the first capture creates one called "Quick Capture".
 
+## ⬇️ [Download QuickNote for Mac](https://github.com/dsryan8197/quick-paste/releases/latest/download/QuickNote.dmg)
+
+Works on macOS 13 (Ventura) or newer, on both Apple Silicon and Intel Macs.
+
+1. Open the downloaded **QuickNote.dmg** and drag **QuickNote** onto the **Applications** folder.
+2. Open **Applications** and double-click **QuickNote**.
+3. The first time, your Mac will say it can't verify the app (it isn't from the App Store). Click **Done**, then go to **System Settings → Privacy & Security**, scroll down and click **Open Anyway** next to QuickNote. You only need to do this once.
+
 ## Build & run
 
 Requires macOS 13+ and Xcode or the Command Line Tools (`xcode-select --install`).
 
 ```bash
-./build.sh
-cp -R build/QuickNote.app /Applications/
-open /Applications/QuickNote.app
+./build.sh        # builds, installs to /Applications (replacing the old copy) and relaunches
+./build.sh dist   # builds dist/QuickNote.dmg to share instead
 ```
+
+To publish a new download, bump the version in `Resources/Info.plist` and push a tag such as `v0.2.0`; GitHub Actions builds the DMG and attaches it to a release.
 
 ## Permissions (first run)
 
