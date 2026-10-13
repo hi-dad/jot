@@ -4,17 +4,12 @@ on:
   push:
   pull_request:
   workflow_dispatch:
-    inputs:
-      release:
-        description: Publish a release (tagged v<version from Info.plist>)
-        type: boolean
-        default: false
 
 jobs:
   build:
     runs-on: macos-15
     permissions:
-      contents: write # to publish a release when a v* tag is pushed
+      contents: write # to publish a release when main changes
     steps:
       - uses: actions/checkout@v5
 
@@ -49,11 +44,13 @@ jobs:
           name: QuickNote
           path: dist/QuickNote.dmg
 
+      # Every update to main becomes the new download behind the README button.
       - name: Publish release
-        if: startsWith(github.ref, 'refs/tags/v') || inputs.release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          tag="$GITHUB_REF_NAME"
-          [[ "$GITHUB_REF" == refs/tags/v* ]] || tag="v$(plutil -extract CFBundleShortVersionString raw Resources/Info.plist)"
-          gh release create "$tag" dist/QuickNote.dmg --target "$GITHUB_SHA" --title "QuickNote $tag" --generate-notes
+          version="$(plutil -extract CFBundleShortVersionString raw Resources/Info.plist)"
+          gh release create "build-$GITHUB_RUN_NUMBER" dist/QuickNote.dmg \
+            --target "$GITHUB_SHA" --latest \
+            --title "QuickNote $version (build $GITHUB_RUN_NUMBER)" --generate-notes
