@@ -15,6 +15,7 @@ final class Dictation: ObservableObject {
     private var task: SFSpeechRecognitionTask?
     private var wantsToListen = false
     private var session = 0
+    private var onFinished: (@MainActor () -> Void)?
 
     func toggle() {
         wantsToListen ? stop() : start()
@@ -45,6 +46,25 @@ final class Dictation: ObservableObject {
     func stop() {
         wantsToListen = false
         teardown()
+    }
+
+    /// Stops recording but lets the recognizer deliver its final transcript, then calls `done`.
+    /// Gives up waiting after 2 seconds.
+    func finish(_ done: @escaping @MainActor () -> Void) {
+        wantsToListen = false
+        guard isListening else {
+            Task { @MainActor in done() }
+            return
+        }
+        onFinished = done
+        engine.stop()
+        engine.inputNode.removeTap(onBus: 0)
+        request?.endAudio()
+        let mySession = session
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(2))
+            if mySession == self.session { self.stop() }
+        }
     }
 
     private func begin() {
@@ -107,6 +127,10 @@ final class Dictation: ObservableObject {
         task?.cancel()
         request = nil
         task = nil
+        if let done = onFinished {
+            onFinished = nil
+            Task { @MainActor in done() }
+        }
     }
 
     private func fail(_ message: String) {

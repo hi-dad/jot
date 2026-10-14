@@ -15,15 +15,30 @@ func press(_ key: CGKeyCode, _ flags: CGEventFlags = []) {
     }
 }
 
-/// True if QuickNote has an on-screen window the size of the capture box (not the menu bar icon).
-func boxVisible() -> Bool {
-    let windows = CGWindowListCopyWindowInfo([.optionOnScreenOnly], kCGNullWindowID) as? [[String: Any]] ?? []
-    return windows.contains { info in
-        guard info[kCGWindowOwnerName as String] as? String == "QuickNote",
-              let bounds = info[kCGWindowBounds as String] as? [String: CGFloat] else { return false }
-        return (bounds["Width"] ?? 0) >= 400
+func type(_ text: String) {
+    for chunk in text.map(String.init) {
+        let units = Array(chunk.utf16)
+        for down in [true, false] {
+            let event = CGEvent(keyboardEventSource: nil, virtualKey: 0, keyDown: down)!
+            event.keyboardSetUnicodeString(stringLength: units.count, unicodeString: units)
+            event.post(tap: .cghidEventTap)
+        }
+        usleep(5_000)
     }
 }
+
+/// Height of QuickNote's on-screen capture box (the window wider than the menu bar icon), or nil.
+func boxHeight() -> CGFloat? {
+    let windows = CGWindowListCopyWindowInfo([.optionOnScreenOnly], kCGNullWindowID) as? [[String: Any]] ?? []
+    for info in windows where info[kCGWindowOwnerName as String] as? String == "QuickNote" {
+        if let bounds = info[kCGWindowBounds as String] as? [String: CGFloat], (bounds["Width"] ?? 0) >= 400 {
+            return bounds["Height"]
+        }
+    }
+    return nil
+}
+
+func boxVisible() -> Bool { boxHeight() != nil }
 
 func waitFor(_ expected: Bool, _ what: String) -> Bool {
     for _ in 0..<30 {
@@ -39,6 +54,14 @@ var passed = waitFor(false, "box hidden at launch")
 for round in 1...2 {
     press(space, control)
     passed = waitFor(true, "⌃⌥Space opens the box (round \(round))") && passed
+    if round == 1, let before = boxHeight() {
+        type(String(repeating: "a longer thought that wraps onto more lines ", count: 6))
+        usleep(500_000)
+        let after = boxHeight() ?? 0
+        let grew = after > before + 40
+        print("\(grew ? "ok" : "FAIL"): box grows with long text (\(Int(before))pt -> \(Int(after))pt)")
+        passed = grew && passed
+    }
     press(escape)
     passed = waitFor(false, "Esc closes the box (round \(round))") && passed
 }
