@@ -45,7 +45,7 @@ macOS will ask for a few permissions the first time you use each feature:
 
 If you denied one by accident, turn it back on in **System Settings → Privacy & Security** (Input Monitoring, Automation, Microphone, Speech Recognition).
 
-Because the app is self-signed, rebuilding it can make macOS ask for these permissions again.
+Rebuilding normally makes macOS ask for these permissions again, because each ad-hoc-signed build looks like a new app. To avoid that, run `./tools/setup-signing.sh` once: it creates a personal "QuickNote Local Signing" certificate, `./build.sh` signs with it from then on, and permissions stick across rebuilds.
 
 ## Notes
 
