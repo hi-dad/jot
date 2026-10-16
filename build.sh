@@ -25,8 +25,17 @@ rm build/Jot-arm64 build/Jot-x86_64
 
 cp Resources/Info.plist "$APP/Contents/Info.plist"
 
-# Ad-hoc signature so macOS will show the microphone / Notes permission prompts.
-codesign --force --sign - "$APP"
+# Sign with the stable local identity if ./tools/setup-signing.sh has been run, so macOS keeps
+# Jot's permissions across rebuilds. Otherwise sign ad hoc, which still lets macOS show the
+# permission prompts but makes each build look like a new app.
+IDENTITY="QuickNote Local Signing"
+if security find-identity -v -p codesigning 2>/dev/null | grep -q "\"$IDENTITY\""; then
+    codesign --force --sign "$IDENTITY" "$APP"
+    echo "Signed as \"$IDENTITY\""
+else
+    codesign --force --sign - "$APP"
+    echo "Signed ad hoc (run ./tools/setup-signing.sh once so permissions survive rebuilds)"
+fi
 echo "Built $APP"
 
 if [[ "${1:-}" == "dist" ]]; then

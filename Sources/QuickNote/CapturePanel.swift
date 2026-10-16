@@ -1,4 +1,5 @@
 import AppKit
+import Combine
 import SwiftUI
 
 @MainActor
@@ -38,6 +39,11 @@ final class CaptureModel: ObservableObject {
 
     func stopDictation() {
         dictation.stop()
+    }
+
+    /// Stops listening, waits for the last words to be transcribed, then saves.
+    func finishDictationAndSave() {
+        dictation.finish { [weak self] in self?.save() }
     }
 
     func save() {
@@ -120,6 +126,8 @@ struct CaptureView: View {
 /// The floating Spotlight-style box that appears on the hotkey.
 final class CapturePanel: NSPanel {
     let model: CaptureModel
+    private var host: NSHostingView<CaptureView>!
+    private var resizeOnChange: AnyCancellable?
 
     init(model: CaptureModel) {
         self.model = model
@@ -140,9 +148,26 @@ final class CapturePanel: NSPanel {
             standardWindowButton(button)?.isHidden = true
         }
 
-        let host = NSHostingView(rootView: CaptureView(model: model, dictation: model.dictation))
+        host = NSHostingView(rootView: CaptureView(model: model, dictation: model.dictation))
         contentView = host
         setContentSize(host.fittingSize)
+
+        // Grow (and shrink) with the text, after SwiftUI has applied each change.
+        resizeOnChange = model.objectWillChange
+            .merge(with: model.dictation.objectWillChange)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in self?.fitToContent() }
+    }
+
+    /// Resizes to fit the content, keeping the top edge in place so the box grows downward.
+    private func fitToContent() {
+        host.layoutSubtreeIfNeeded()
+        let size = frameRect(forContentRect: NSRect(origin: .zero, size: host.fittingSize)).size
+        guard size.height != frame.height else { return }
+        var newFrame = frame
+        newFrame.origin.y += frame.height - size.height
+        newFrame.size.height = size.height
+        setFrame(newFrame, display: true)
     }
 
     required init?(coder: NSCoder) {

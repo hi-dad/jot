@@ -54,3 +54,37 @@ jobs:
           gh release create "build-$GITHUB_RUN_NUMBER" dist/Jot.dmg \
             --target "$GITHUB_SHA" --latest \
             --title "Jot $version (build $GITHUB_RUN_NUMBER)" --generate-notes
+
+  # Checks tools/setup-signing.sh works and that builds signed with it keep the same identity,
+  # which is what lets macOS remember Jot's permissions across rebuilds.
+  stable-signing:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up a throwaway keychain
+        run: |
+          security create-keychain -p ci ci.keychain
+          security unlock-keychain -p ci ci.keychain
+          security list-keychains -d user -s ci.keychain $(security list-keychains -d user | tr -d '"')
+          echo "KEYCHAIN=$HOME/Library/Keychains/ci.keychain-db" >> "$GITHUB_ENV"
+
+      - name: Run setup-signing.sh (twice, to check it's safe to re-run)
+        env:
+          TRUST_AS_ADMIN: 1
+        run: |
+          ./tools/setup-signing.sh
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k ci "$KEYCHAIN" >/dev/null
+          ./tools/setup-signing.sh | grep "already set up"
+
+      - name: Two builds share one signing identity
+        run: |
+          ./build.sh dist | tee first.log
+          grep 'Signed as "QuickNote Local Signing"' first.log
+          codesign -d -r- build/Jot.app 2>&1 | grep designated > first.req
+          ./build.sh dist >/dev/null
+          codesign -d -r- build/Jot.app 2>&1 | grep designated > second.req
+          cat first.req
+          grep -q 'certificate leaf' first.req
+          diff first.req second.req
+          codesign --verify --strict --verbose build/Jot.app

@@ -54,7 +54,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
             self?.showCapture(listening: key == .control)
         }
         modifierHold.onHoldEnd = { [weak self] key in
-            if key == .control { self?.panel?.model.stopDictation() }
+            // Letting go of ⌃ saves what you said, no Return needed.
+            if key == .control { self?.panel?.model.finishDictationAndSave() }
         }
         modifierHold.start(askForPermission: true)
 
