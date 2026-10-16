@@ -1,4 +1,4 @@
-// UI smoke test run in CI: launches QuickNote, presses its hotkey, and checks the
+// UI smoke test run in CI: launches Jot, presses its hotkey, and checks the
 // capture box really appears on screen — twice, since reopening is where it broke.
 import AppKit
 import ApplicationServices
@@ -27,10 +27,10 @@ func type(_ text: String) {
     }
 }
 
-/// Height of QuickNote's on-screen capture box (the window wider than the menu bar icon), or nil.
+/// Height of Jot's on-screen capture box (the window wider than the menu bar icon), or nil.
 func boxHeight() -> CGFloat? {
     let windows = CGWindowListCopyWindowInfo([.optionOnScreenOnly], kCGNullWindowID) as? [[String: Any]] ?? []
-    for info in windows where info[kCGWindowOwnerName as String] as? String == "QuickNote" {
+    for info in windows where info[kCGWindowOwnerName as String] as? String == "Jot" {
         if let bounds = info[kCGWindowBounds as String] as? [String: CGFloat], (bounds["Width"] ?? 0) >= 400 {
             return bounds["Height"]
         }

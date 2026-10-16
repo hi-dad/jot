@@ -3,13 +3,13 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleName</key>
-    <string>QuickNote</string>
+    <string>Jot</string>
     <key>CFBundleDisplayName</key>
-    <string>QuickNote</string>
+    <string>Jot</string>
     <key>CFBundleIdentifier</key>
     <string>com.quicknote.app</string>
     <key>CFBundleExecutable</key>
-    <string>QuickNote</string>
+    <string>Jot</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
@@ -21,10 +21,10 @@
     <key>LSUIElement</key>
     <true/>
     <key>NSMicrophoneUsageDescription</key>
-    <string>QuickNote listens to your voice so you can dictate captures.</string>
+    <string>Jot listens to your voice so you can dictate captures.</string>
     <key>NSSpeechRecognitionUsageDescription</key>
-    <string>QuickNote turns your speech into text for your captures.</string>
+    <string>Jot turns your speech into text for your captures.</string>
     <key>NSAppleEventsUsageDescription</key>
-    <string>QuickNote adds your captures to the Apple Notes page you choose.</string>
+    <string>Jot adds your captures to the Apple Notes page you choose.</string>
 </dict>
 </plist>

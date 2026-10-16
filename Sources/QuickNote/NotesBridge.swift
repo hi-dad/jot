@@ -13,7 +13,7 @@ struct NotesError: LocalizedError {
     var errorDescription: String? {
         switch code {
         case -1743:
-            return "QuickNote isn't allowed to control Notes. Turn it on in System Settings → Privacy & Security → Automation → QuickNote → Notes."
+            return "Jot isn't allowed to control Notes. Turn it on in System Settings → Privacy & Security → Automation → Jot → Notes."
         case -1728, -1719:
             return "The chosen note couldn't be found. It may have been deleted — pick a note again from the menu bar icon."
         default:

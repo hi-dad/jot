@@ -1,7 +1,7 @@
 import AppKit
 
 @main
-enum QuickNoteMain {
+enum JotMain {
     @MainActor
     static func main() {
         let app = NSApplication.shared

@@ -18,31 +18,31 @@ jobs:
           xcodebuild -version
           swiftc --version
 
-      - name: Build QuickNote.app and QuickNote.dmg
+      - name: Build Jot.app and Jot.dmg
         run: ./build.sh dist
 
       - name: Verify bundle
         run: |
-          test -x build/QuickNote.app/Contents/MacOS/QuickNote
-          plutil -lint build/QuickNote.app/Contents/Info.plist
-          codesign --verify --verbose build/QuickNote.app
-          lipo build/QuickNote.app/Contents/MacOS/QuickNote -verify_arch arm64 x86_64
-          hdiutil verify dist/QuickNote.dmg
+          test -x build/Jot.app/Contents/MacOS/Jot
+          plutil -lint build/Jot.app/Contents/Info.plist
+          codesign --verify --verbose build/Jot.app
+          lipo build/Jot.app/Contents/MacOS/Jot -verify_arch arm64 x86_64
+          hdiutil verify dist/Jot.dmg
 
       - name: Smoke test (hotkey opens the capture box)
         run: |
-          open build/QuickNote.app
+          open build/Jot.app
           sleep 3
           swift ci/smoke-test.swift
 
       - name: App log
         if: always()
-        run: log show --last 5m --info --predicate 'process == "QuickNote"' | tail -50
+        run: log show --last 5m --info --predicate 'process == "Jot"' | tail -50
 
       - uses: actions/upload-artifact@v4
         with:
-          name: QuickNote
-          path: dist/QuickNote.dmg
+          name: Jot
+          path: dist/Jot.dmg
 
       # Every update to main becomes the new download behind the README button.
       - name: Publish release
@@ -51,6 +51,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           version="$(plutil -extract CFBundleShortVersionString raw Resources/Info.plist)"
-          gh release create "build-$GITHUB_RUN_NUMBER" dist/QuickNote.dmg \
+          gh release create "build-$GITHUB_RUN_NUMBER" dist/Jot.dmg \
             --target "$GITHUB_SHA" --latest \
-            --title "QuickNote $version (build $GITHUB_RUN_NUMBER)" --generate-notes
+            --title "Jot $version (build $GITHUB_RUN_NUMBER)" --generate-notes
