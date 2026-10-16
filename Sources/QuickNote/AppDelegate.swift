@@ -195,7 +195,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
         login.state = SMAppService.mainApp.status == .enabled ? .on : .off
         statusMenu.addItem(login)
 
-        statusMenu.addItem(NSMenuItem(title: "Quit QuickNote", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+        statusMenu.addItem(NSMenuItem(title: "Quit Jot", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
     }
 
     private func rebuildNotesMenu() {
@@ -247,7 +247,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
         if modifierHold.start(askForPermission: true) { return }
         showAlert(
             "Allow Input Monitoring",
-            "To open QuickNote by holding ⌥ (type) or ⌃ (talk), turn on QuickNote in System Settings → Privacy & Security → Input Monitoring, then quit and reopen QuickNote."
+            "To open Jot by holding ⌥ (type) or ⌃ (talk), turn on Jot in System Settings → Privacy & Security → Input Monitoring, then quit and reopen Jot."
         )
         if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ListenEvent") {
             NSWorkspace.shared.open(url)
@@ -263,7 +263,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
         bringToFront()
         let alert = NSAlert()
         alert.messageText = "New note name"
-        alert.informativeText = "QuickNote will create this note in your default Notes folder and save captures to it."
+        alert.informativeText = "Jot will create this note in your default Notes folder and save captures to it."
         let field = NSTextField(frame: NSRect(x: 0, y: 0, width: 260, height: 24))
         field.stringValue = Self.defaultNoteName
         alert.accessoryView = field
@@ -298,7 +298,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
                 try SMAppService.mainApp.register()
             }
         } catch {
-            showAlert("Couldn't change Launch at Login", "\(error.localizedDescription)\n\nTip: move QuickNote.app into your Applications folder first.")
+            showAlert("Couldn't change Launch at Login", "\(error.localizedDescription)\n\nTip: move Jot.app into your Applications folder first.")
         }
     }
 
@@ -312,7 +312,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
     }
 
     private func setStatusIcon(_ symbol: String) {
-        let image = NSImage(systemSymbolName: symbol, accessibilityDescription: "QuickNote")
+        let image = NSImage(systemSymbolName: symbol, accessibilityDescription: "Jot")
         image?.isTemplate = true
         statusItem.button?.image = image
     }

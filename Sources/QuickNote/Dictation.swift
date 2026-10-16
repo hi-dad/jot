@@ -26,13 +26,13 @@ final class Dictation: ObservableObject {
         SFSpeechRecognizer.requestAuthorization { status in
             Task { @MainActor in
                 guard status == .authorized else {
-                    self.fail("Speech recognition is turned off for QuickNote. Turn it on in System Settings → Privacy & Security → Speech Recognition.")
+                    self.fail("Speech recognition is turned off for Jot. Turn it on in System Settings → Privacy & Security → Speech Recognition.")
                     return
                 }
                 AVCaptureDevice.requestAccess(for: .audio) { granted in
                     Task { @MainActor in
                         guard granted else {
-                            self.fail("Microphone access is turned off for QuickNote. Turn it on in System Settings → Privacy & Security → Microphone.")
+                            self.fail("Microphone access is turned off for Jot. Turn it on in System Settings → Privacy & Security → Microphone.")
                             return
                         }
                         self.begin()
