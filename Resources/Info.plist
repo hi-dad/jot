@@ -8,7 +8,9 @@
     <string>Jot</string>
     <key>CFBundleIdentifier</key>
     <string>com.quicknote.app</string>
-    <key>CFBundleExecutable</key>
+    <key>CFBundleIconFile</key>
+	<string>AppIcon</string>
+	<key>CFBundleExecutable</key>
     <string>Jot</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>

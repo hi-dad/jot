@@ -24,6 +24,7 @@ lipo -create build/Jot-arm64 build/Jot-x86_64 -output "$APP/Contents/MacOS/Jot"
 rm build/Jot-arm64 build/Jot-x86_64
 
 cp Resources/Info.plist "$APP/Contents/Info.plist"
+cp Resources/AppIcon.icns "$APP/Contents/Resources/"
 
 # Sign with the stable local identity if ./tools/setup-signing.sh has been run, so macOS keeps
 # Jot's permissions across rebuilds. Otherwise sign ad hoc, which still lets macOS show the
