@@ -2,56 +2,46 @@
 
 <img src="images/icon.png" alt="Jot app icon" width="128">
 
-*Formerly QuickNote.*
+**A tiny Mac menu bar app: hold a key, type or talk, and it lands as a bullet in Apple Notes.**
 
-A tiny Mac menu-bar app for capturing thoughts and to-dos without opening Notes.
-Press a hotkey, type or talk, hit Return, and the text is added as a bullet at the bottom of an Apple Notes page you choose.
+<img src="images/demo.gif" alt="Jot: type a note with Option, or speak it with Control, from any app, and it's saved as a bullet in Apple Notes" width="720">
 
-| Hotkey | What it does |
-|---|---|
-| **Hold ⌥ Option** | Open the capture box to type |
-| **Hold ⌃ Control** | Open the box and listen while held; release to stop |
-| **⌃⌥Space** | Open the capture box to type (backup) |
-| **⌃⌥D** | Open the capture box and start listening (backup) |
-| **⌘D** (in the box) | Start/stop dictation |
-| **Return** | Save to Notes |
-| **Esc** | Cancel |
+### [⬇️ Download Jot](https://github.com/hi-dad/jot/releases/latest/download/Jot.dmg)
+Free · macOS 13 or newer · always the latest version
 
-The menu bar icon (✎) lets you **choose which note** captures go to, create a new note, open the note in Notes, and turn on **Launch at Login**.
-If you haven't picked a note yet, the first capture creates one called "Quick Capture".
+## Install
 
-## ⬇️ [Download Jot for Mac](https://github.com/hi-dad/jot/releases/latest/download/Jot.dmg)
+1. Open **Jot.dmg** and drag Jot into **Applications**.
+2. Open it. When macOS says it can't verify the app, click **Done**, then go to **System Settings → Privacy & Security** and click **Open Anyway** (once).
+3. Allow the permissions it asks for (see below).
 
-Works on macOS 13 (Ventura) or newer, on both Apple Silicon and Intel Macs.
+## How to use it
 
-1. Open the downloaded **Jot.dmg** and drag **Jot** onto the **Applications** folder.
-2. Open **Applications** and double-click **Jot**.
-3. The first time, your Mac will say it can't verify the app (it isn't from the App Store). Click **Done**, then go to **System Settings → Privacy & Security**, scroll down and click **Open Anyway** next to Jot. You only need to do this once.
+- **Hold ⌥ Option** to type a note. **Hold ⌃ Control** to say it.
+- Press **Return** to save it as a bullet in your note, or **Esc** to cancel.
+- Choose which note it saves to from the **✎** menu bar icon.
 
-## Build & run
+## Permissions
 
-Requires macOS 13+ and Xcode or the Command Line Tools (`xcode-select --install`).
+- **Input Monitoring:** for the hold-a-key shortcuts. Turn it on, then reopen Jot.
+- **Notes:** the first time you save.
+- **Microphone** and **Speech Recognition:** the first time you talk.
+
+Use a note just for Jot: it adds to the end of that note. If saving ever fails, your text is copied to the clipboard.
+
+**Update:** download again and replace the app. **Remove:** ✎ menu → **Quit Jot**, then drag it to the Trash.
+
+<details><summary>Build it yourself</summary>
+
+Needs Xcode or the Command Line Tools.
 
 ```bash
-./build.sh        # builds, installs to /Applications (replacing the old copy) and relaunches
-./build.sh dist   # builds dist/Jot.dmg to share instead
+./build.sh        # builds, installs to Applications and opens it
+./build.sh dist   # makes dist/Jot.dmg instead
 ```
 
-Every merge to `main` publishes a new download automatically: GitHub Actions builds the DMG and posts it as the latest release, which is what the download link above serves. Pushes to other branches are built and tested but not published.
+Run `./tools/setup-signing.sh` once so permissions survive rebuilds.
 
-## Permissions (first run)
+</details>
 
-macOS will ask for a few permissions the first time you use each feature:
-
-- **Input Monitoring** — on first launch, for hold ⌥ / hold ⌃. Turn Jot on in the settings page macOS opens, then quit and reopen Jot. (⌃⌥Space and ⌃⌥D work without it.)
-- **Notes (Automation)** — on your first save. Click OK.
-- **Speech Recognition** and **Microphone** — the first time you dictate. The box may close while the prompt is up; just press the hotkey again.
-
-If you denied one by accident, turn it back on in **System Settings → Privacy & Security** (Input Monitoring, Automation, Microphone, Speech Recognition).
-
-Rebuilding normally makes macOS ask for these permissions again, because each ad-hoc-signed build looks like a new app. To avoid that, run `./tools/setup-signing.sh` once: it creates a personal "QuickNote Local Signing" certificate, `./build.sh` signs with it from then on, and permissions stick across rebuilds.
-
-## Notes
-
-- Use a dedicated note for captures. Jot rewrites the note's text to append to it, so images or attachments in that note may be dropped.
-- If saving fails, your text is copied to the clipboard so nothing is lost.
+MIT License
