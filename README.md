@@ -18,7 +18,7 @@ Press a hotkey, type or talk, hit Return, and the text is added as a bullet at t
 The menu bar icon (✎) lets you **choose which note** captures go to, create a new note, open the note in Notes, and turn on **Launch at Login**.
 If you haven't picked a note yet, the first capture creates one called "Quick Capture".
 
-## ⬇️ [Download Jot for Mac](https://github.com/dsryan8197/jot/releases/latest/download/Jot.dmg)
+## ⬇️ [Download Jot for Mac](https://github.com/hi-dad/jot/releases/latest/download/Jot.dmg)
 
 Works on macOS 13 (Ventura) or newer, on both Apple Silicon and Intel Macs.
 
