@@ -1,5 +1,7 @@
 # Jot
 
+<img src="images/icon.png" alt="Jot app icon" width="128">
+
 *Formerly QuickNote.*
 
 A tiny Mac menu-bar app for capturing thoughts and to-dos without opening Notes.
