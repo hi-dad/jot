@@ -43,8 +43,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
             HotKey(name: "⌃⌥Space", keyCode: kVK_Space, modifiers: controlKey | optionKey) { [weak self] in
                 self?.showCapture(listening: false)
             },
-            // ⌃⌥D: open the box and start listening right away
-            HotKey(name: "⌃⌥D", keyCode: kVK_ANSI_D, modifiers: controlKey | optionKey) { [weak self] in
+            // ⌥D: open the box and start listening right away
+            HotKey(name: "⌥D", keyCode: kVK_ANSI_D, modifiers: optionKey) { [weak self] in
                 self?.showCapture(listening: true)
             },
         ]
@@ -170,7 +170,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
             capture.keyEquivalent = " "
             capture.keyEquivalentModifierMask = [.control, .option]
             dictate.keyEquivalent = "d"
-            dictate.keyEquivalentModifierMask = [.control, .option]
+            dictate.keyEquivalentModifierMask = [.option]
             let enable = NSMenuItem(title: "Turn On Hold ⌥ / Hold ⌃…", action: #selector(menuEnableHold), keyEquivalent: "")
             enable.target = self
             statusMenu.addItem(enable)
