@@ -153,17 +153,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
     private func rebuildStatusMenu() {
         statusMenu.removeAllItems()
 
-        let capture = NSMenuItem(title: "New Capture", action: #selector(menuCapture), keyEquivalent: " ")
-        capture.keyEquivalentModifierMask = [.control, .option]
+        let capture = NSMenuItem(title: "New Capture", action: #selector(menuCapture), keyEquivalent: "")
         capture.target = self
         statusMenu.addItem(capture)
 
-        let dictate = NSMenuItem(title: "Dictate", action: #selector(menuDictate), keyEquivalent: "d")
-        dictate.keyEquivalentModifierMask = [.control, .option]
+        let dictate = NSMenuItem(title: "Dictate", action: #selector(menuDictate), keyEquivalent: "")
         dictate.target = self
         statusMenu.addItem(dictate)
 
-        if !modifierHold.isRunning {
+        if modifierHold.isRunning {
+            // Show the hold keys, not the ⌃⌥ backups, so the one-key shortcut is what people learn.
+            showHint("Hold ⌥ Option", on: capture)
+            showHint("Hold ⌃ Control", on: dictate)
+        } else {
+            // Without Input Monitoring only the backups work, so show those instead.
+            capture.keyEquivalent = " "
+            capture.keyEquivalentModifierMask = [.control, .option]
+            dictate.keyEquivalent = "d"
+            dictate.keyEquivalentModifierMask = [.control, .option]
             let enable = NSMenuItem(title: "Turn On Hold ⌥ / Hold ⌃…", action: #selector(menuEnableHold), keyEquivalent: "")
             enable.target = self
             statusMenu.addItem(enable)
@@ -197,6 +204,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
         statusMenu.addItem(login)
 
         statusMenu.addItem(NSMenuItem(title: "Quit Jot", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+    }
+
+    /// Puts a key hint under a menu item's title (or after it on macOS before 14.4).
+    private func showHint(_ hint: String, on item: NSMenuItem) {
+        if #available(macOS 14.4, *) {
+            item.subtitle = hint
+        } else {
+            item.title += "  (\(hint.lowercased()))"
+        }
     }
 
     private func rebuildNotesMenu() {
