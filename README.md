@@ -18,6 +18,7 @@ Free · macOS 13 or newer · always the latest version
 ## How to use it
 
 - **Hold ⌥ Option** to type a note. **Hold ⌃ Control** to say it.
+- Or tap **⌥Space** to type, **⌃Space** to talk. These work even without Input Monitoring.
 - Press **Return** to save it as a bullet in your note, or **Esc** to cancel.
 - Choose which note it saves to from the **✎** menu bar icon.
 

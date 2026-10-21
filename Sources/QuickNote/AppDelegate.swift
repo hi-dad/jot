@@ -39,12 +39,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
         statusItem.menu = statusMenu
 
         hotKeys = [
-            // ⌃⌥Space: open the box for typing
-            HotKey(name: "⌃⌥Space", keyCode: kVK_Space, modifiers: controlKey | optionKey) { [weak self] in
+            // Same pattern as the holds: ⌥ is typing, ⌃ is talking.
+            // ⌥Space: open the box for typing
+            HotKey(name: "⌥Space", keyCode: kVK_Space, modifiers: optionKey) { [weak self] in
                 self?.showCapture(listening: false)
             },
-            // ⌥D: open the box and start listening right away
-            HotKey(name: "⌥D", keyCode: kVK_ANSI_D, modifiers: optionKey) { [weak self] in
+            // ⌃Space: open the box and start listening right away
+            HotKey(name: "⌃Space", keyCode: kVK_Space, modifiers: controlKey) { [weak self] in
                 self?.showCapture(listening: true)
             },
         ]
@@ -162,15 +163,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
         statusMenu.addItem(dictate)
 
         if modifierHold.isRunning {
-            // Show the hold keys, not the ⌃⌥ backups, so the one-key shortcut is what people learn.
+            // Show the hold keys, not the ⌥Space / ⌃Space backups, so the one-key shortcut is what people learn.
             showHint("Hold ⌥ Option", on: capture)
             showHint("Hold ⌃ Control", on: dictate)
         } else {
             // Without Input Monitoring only the backups work, so show those instead.
             capture.keyEquivalent = " "
-            capture.keyEquivalentModifierMask = [.control, .option]
-            dictate.keyEquivalent = "d"
-            dictate.keyEquivalentModifierMask = [.option]
+            capture.keyEquivalentModifierMask = [.option]
+            dictate.keyEquivalent = " "
+            dictate.keyEquivalentModifierMask = [.control]
             let enable = NSMenuItem(title: "Turn On Hold ⌥ / Hold ⌃…", action: #selector(menuEnableHold), keyEquivalent: "")
             enable.target = self
             statusMenu.addItem(enable)

@@ -3,7 +3,7 @@
 import AppKit
 import ApplicationServices
 
-let control: CGEventFlags = [.maskControl, .maskAlternate]
+let option: CGEventFlags = [.maskAlternate]
 let space: CGKeyCode = 49, escape: CGKeyCode = 53
 
 func press(_ key: CGKeyCode, _ flags: CGEventFlags = []) {
@@ -52,8 +52,8 @@ func waitFor(_ expected: Bool, _ what: String) -> Bool {
 print("Accessibility trusted (needed to post key events): \(AXIsProcessTrusted())")
 var passed = waitFor(false, "box hidden at launch")
 for round in 1...2 {
-    press(space, control)
-    passed = waitFor(true, "⌃⌥Space opens the box (round \(round))") && passed
+    press(space, option)
+    passed = waitFor(true, "⌥Space opens the box (round \(round))") && passed
     if round == 1, let before = boxHeight() {
         type(String(repeating: "a longer thought that wraps onto more lines ", count: 6))
         usleep(500_000)
