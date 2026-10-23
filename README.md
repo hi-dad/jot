@@ -9,10 +9,15 @@
 ### [⬇️ Download Jot](https://github.com/hi-dad/jot/releases/latest/download/Jot.dmg)
 Free · macOS 13 or newer · always the latest version
 
+⚠️ **The first time you open it, macOS blocks it.** That's normal for free apps outside the App Store. [See step 2 below](#install) for the one click that lets it open.
+
 ## Install
 
 1. Open **Jot.dmg** and drag Jot into **Applications**.
 2. Open it. When macOS says it can't verify the app, click **Done**, then go to **System Settings → Privacy & Security** and click **Open Anyway** (once).
+
+   <img src="images/open-anyway.png" alt="System Settings, Privacy and Security: the line saying Jot was blocked to protect your Mac, with the Open Anyway button next to it" width="600">
+
 3. Allow the permissions it asks for (see below).
 
 ## How to use it
