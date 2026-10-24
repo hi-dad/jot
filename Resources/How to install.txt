@@ -6,13 +6,8 @@ INSTALL
 2. Open Applications and double-click Jot.
 
 THE FIRST TIME YOU OPEN IT
-Your Mac will say it "can't verify" the app, because it isn't from the App Store.
-That's normal for apps shared between friends. To allow it:
-  1. Click "Done" (or "OK") on that message.
-  2. Open System Settings > Privacy & Security.
-  3. Scroll down and click "Open Anyway" next to Jot.
-  4. Enter your Mac password if asked, then click "Open Anyway" again.
-You only have to do this once.
+Your Mac asks if you're sure you want to open an app from the internet.
+Click "Open". The app is signed and checked by Apple.
 
 PERMISSIONS
 macOS asks for these the first time you use each feature:
