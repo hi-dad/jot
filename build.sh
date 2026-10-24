@@ -30,7 +30,12 @@ cp Resources/AppIcon.icns "$APP/Contents/Resources/"
 # Jot's permissions across rebuilds. Otherwise sign ad hoc, which still lets macOS show the
 # permission prompts but makes each build look like a new app.
 IDENTITY="QuickNote Local Signing"
-if security find-identity -v -p codesigning 2>/dev/null | grep -q "\"$IDENTITY\""; then
+# GitHub's release builds sign with Developer ID + hardened runtime + timestamp, as Apple's notarization needs.
+# Resources/Jot.entitlements lets the hardened app use the microphone and control Notes.
+if [[ -n "${SIGN_IDENTITY:-}" ]]; then
+    codesign --force --sign "$SIGN_IDENTITY" --options runtime --timestamp --entitlements Resources/Jot.entitlements "$APP"
+    echo "Signed as \"$SIGN_IDENTITY\""
+elif security find-identity -v -p codesigning 2>/dev/null | grep -q "\"$IDENTITY\""; then
     codesign --force --sign "$IDENTITY" "$APP"
     echo "Signed as \"$IDENTITY\""
 else
