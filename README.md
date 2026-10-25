@@ -30,7 +30,7 @@ Free · macOS 13 or newer · always the latest version
 
 Use a note just for Jot: it adds to the end of that note. If saving ever fails, your text is copied to the clipboard.
 
-**Update:** download again and replace the app. **Remove:** ✎ menu → **Quit Jot**, then drag it to the Trash.
+**Updates:** it offers new versions itself (or ✎ menu → **Check for Updates…**). **Remove:** ✎ menu → **Quit Jot**, then drag it to the Trash.
 
 <details><summary>Build it yourself</summary>
 

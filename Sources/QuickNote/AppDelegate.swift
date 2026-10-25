@@ -1,6 +1,7 @@
 import AppKit
 import Carbon.HIToolbox
 import ServiceManagement
+import Sparkle
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWindowDelegate {
@@ -32,6 +33,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
     // MARK: Launch
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        Updates.start()
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         setStatusIcon("square.and.pencil")
         statusMenu.delegate = self
@@ -204,6 +206,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
         login.state = SMAppService.mainApp.status == .enabled ? .on : .off
         statusMenu.addItem(login)
 
+        let update = NSMenuItem(title: "Check for Updates…", action: #selector(SPUStandardUpdaterController.checkForUpdates(_:)), keyEquivalent: "")
+        update.target = Updates.controller
+        statusMenu.addItem(update)
         statusMenu.addItem(NSMenuItem(title: "Quit Jot", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
     }
 
@@ -350,4 +355,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate, NSWind
         alert.informativeText = message
         alert.runModal()
     }
+}
+
+// MARK: - Updates
+
+/// Self-updating from this app's GitHub releases (Sparkle): checks about once a day and offers new versions.
+enum Updates {
+    static let controller = SPUStandardUpdaterController(startingUpdater: false, updaterDelegate: nil, userDriverDelegate: nil)
+    static func start() { controller.startUpdater() }
+    static func check() { controller.checkForUpdates(nil) }
 }

@@ -6,6 +6,7 @@
 #   ./build.sh dist   build and make dist/Jot.dmg to share; doesn't install
 set -euo pipefail
 cd "$(dirname "$0")"
+source tools/sparkle.sh && sparkle_fetch   # self-updating (see tools/sparkle.sh)
 
 APP=build/Jot.app
 rm -rf build
@@ -17,6 +18,7 @@ for arch in arm64 x86_64; do
     swiftc -O -parse-as-library \
         -target "$arch-apple-macos13.0" \
         -sdk "$SDK" \
+        "${SPARKLE_SWIFTC_FLAGS[@]}" \
         Sources/QuickNote/*.swift \
         -o "build/Jot-$arch"
 done
@@ -25,6 +27,8 @@ rm build/Jot-arm64 build/Jot-x86_64
 
 cp Resources/Info.plist "$APP/Contents/Info.plist"
 cp Resources/AppIcon.icns "$APP/Contents/Resources/"
+sparkle_embed "$APP"
+sparkle_plist "$APP" jot
 
 # Sign with the stable local identity if ./tools/setup-signing.sh has been run, so macOS keeps
 # Jot's permissions across rebuilds. Otherwise sign ad hoc, which still lets macOS show the
@@ -33,12 +37,15 @@ IDENTITY="QuickNote Local Signing"
 # GitHub's release builds sign with Developer ID + hardened runtime + timestamp, as Apple's notarization needs.
 # Resources/Jot.entitlements lets the hardened app use the microphone and control Notes.
 if [[ -n "${SIGN_IDENTITY:-}" ]]; then
+    sparkle_sign "$APP" --force --sign "$SIGN_IDENTITY" --options runtime --timestamp
     codesign --force --sign "$SIGN_IDENTITY" --options runtime --timestamp --entitlements Resources/Jot.entitlements "$APP"
     echo "Signed as \"$SIGN_IDENTITY\""
 elif security find-identity -v -p codesigning 2>/dev/null | grep -q "\"$IDENTITY\""; then
+    sparkle_sign "$APP" --force --sign "$IDENTITY"
     codesign --force --sign "$IDENTITY" "$APP"
     echo "Signed as \"$IDENTITY\""
 else
+    sparkle_sign "$APP" --force --sign -
     codesign --force --sign - "$APP"
     echo "Signed ad hoc (run ./tools/setup-signing.sh once so permissions survive rebuilds)"
 fi
